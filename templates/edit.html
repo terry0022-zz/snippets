@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}add{% endblock %}
+
+{% block content %}
+  <form action="/edit/{{ snippet.id }}" method="post" id="edit">
+    <fieldset>
+      <div class="control-group">
+        <label class="control-label" for="title">Title:</label>
+        <div class="controls">
+          <input type="text" class="input-xlarge" style="width:500px;" id="title" name="title" value="{{ snippet.title }}">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="tags">Tags:</label>
+        <div class="controls">
+          <input type="text" class="input-xlarge" id="tags" name="tags" value="{{ snippet.tags }}">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="description">Description:</label>
+        <div class="controls">
+          <textarea class="input-xlarge" name="description" style="width:500px;height:100px;">{{ snippet.description }}</textarea>
+        </div>
+      </div>
+      <pre id="code">{{ snippet.snippet }}</pre>
+    </fieldset>
+    <input class="btn btn-primary" style="margin-top:340px;" type="submit" value="Edit Snippet">
+  </form>
+   <script>
+    $(function () {
+      function htmlEntities (str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      var c = ace.edit('code');
+      c.setTheme('ace/theme/mono_industrial');
+      c.setShowPrintMargin(false);
+      c.getSession().setTabSize(2);
+
+      $('#tags').tagsInput({
+        'height': '25px',
+        'width': '500px'
+      });
+
+      $('#edit').submit(function () {
+        $('<input />', {
+          type: 'hidden',
+          name: 'snippet',
+          value: htmlEntities(c.getSession().getValue())
+        }).appendTo('#edit');
+      });
+    });
+  </script>
+{% endblock %}

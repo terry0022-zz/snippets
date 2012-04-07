@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}all{% endblock %}
+
+{% block content %}
+  {% set bottom = snippets|length - ((snippets|length % 3) ? snippets|length % 3 : 3) %}
+  {% for snippet in snippets %}
+    {% if loop.index > bottom %}
+    <div class="snippet bottom">
+    {% else %}
+    <div class="snippet">
+    {% endif %}
+      <h3 title="{{ snippet.title }}"><a href="/view/{{ snippet.id }}">{{ snippet.title }}</a></h3>
+      <p>
+        {{ snippet.description }}
+      </p>
+      {% for tag in snippet.tags %}
+        <span class="tag">{{ tag }}</span>
+      {% endfor %}
+      <div class="clearfix"></div>
+    </div>
+  {% else %}
+    <p style="margin-top:40px;text-align:center;font-size:2em;">No snippets found :(</p>
+  {% endfor %}
+  <div class="clearfix"></div>
+{% endblock %}

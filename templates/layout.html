@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>snippets. {% block page_title %} {% endblock %}</title>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans+Condensed:700">
+  <link rel="stylesheet" href="/assets/css/_snippets.css">
+
+  <script>window.q=[];window.$=function(f){q.push(f)}</script>
+  
+  <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div id="container">
+    <header>
+      <h1 class="left"><a href="/">snippets.</a></h1>
+      <form class="left" style="margin-left:20px;" action="/" method="get">
+        <input type="text" class="input-large search-query" name="q" value="{{ query }}" placeholder="magic...">
+      </form>
+      
+      {% if page == 'index' %}
+      <a class="btn btn-success right" href="/add" style="margin-left:10px;"><i class="icon-plus-sign icon-white"></i> Add</a>
+      {% endif %}
+
+      {% if page == 'view' %}
+      <a class="btn btn-success right" style="margin-left:10px;" href="/edit/{{ id }}"><i class="icon-edit icon-white"></i> Edit</a>
+      {% endif %}
+       
+      {% if page != 'index' %}
+      <a class="btn btn-info right" href="/"><i class="icon-home icon-white"></i> Home</a>
+      {% endif %} 
+
+      <div class="clearfix"></div>
+    </header>
+    {% if alert %}
+    <div class="alert alert-block">
+      {{ alert }}
+    </div>
+    {% endif %}
+    <div id="content">
+      {% block content %} {% endblock %}
+    </div>
+    <footer>
+    </footer>
+  </div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/assets/js/jquery-1.7.1.min.js"><\/script>')</script>
+  <script src="/assets/js/ace.js"></script>
+  <script src="/assets/js/theme-mono_industrial.js"></script>
+  <script src="/assets/js/jquery.tagsinput.min.js"></script>
+  <script>$.each(q,function(i,f){$(f)})</script>
+</body>
+</html>

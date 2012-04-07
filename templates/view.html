@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}view{% endblock %}
+
+{% block content %}
+  <h2>{{ snippet.title }}</h2>
+  <p>
+    {{ snippet.description }}
+  </p>
+  <p style="margin-bottom:5px;">
+  {% for tag in snippet.tags %}
+    <span class="tag">{{ tag }}</span>
+  {% endfor %}
+    <div class="clearfix"></div>
+  </p>
+  <pre id="code">{{ snippet.snippet }}</pre>
+  <script>
+    $(function () {
+      var c = ace.edit('code');
+      c.setTheme('ace/theme/mono_industrial');
+      c.setShowPrintMargin(false);
+      c.setReadOnly(true);
+    });
+  </script>
+{% endblock %}

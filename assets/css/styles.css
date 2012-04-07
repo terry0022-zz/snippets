@@ -1,0 +1,88 @@
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+a, a:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  color: #333;
+  line-height: 18px;
+}
+
+#container {
+  width: 940px;
+  margin: 0 auto;
+}
+
+#container header {
+  margin: 50px 0 25px 0;
+}
+
+#content {
+  margin: 35px 0;
+}
+
+h1 {
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 4em;
+  float: left;
+}
+
+h2 {
+  font-size: 1.80em;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+h3 {
+  font-size: 1.4em;
+  font-weight: bold;
+  line-height: 1.2em;
+}
+
+p {
+  margin: 20px 0;
+}
+
+.tag {
+  font-size: 0.85em;
+  background: #009EE1;
+  font-weight: bold;
+  color: #FFF;
+  padding: 1px 4px 2px;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+}
+
+#code { 
+  width: 940px;
+  height: 300px;
+  font-size: 1.1em;
+  margin-top: 20px;
+}
+
+.snippet {
+  height: 180px;
+  width: 270px;
+  padding: 20px;
+  border-right: 1px dotted #CCC;
+  border-bottom: 1px dotted #CCC;
+  float: left;
+}
+
+.snippet:nth-child(3n+3) {
+  border-right: 0;
+}
+
+.snippet.bottom {
+  border-bottom: 0;
+}
