@@ -33,6 +33,7 @@ $app->get('/', function () use ($app, $db) {
 
   $st->setFetchMode(PDO::FETCH_ASSOC);
   $results = $st->fetchAll();
+  $st = NULL;
 
   foreach($results as $k => $v) {
     $results[$k]['tags'] = explode(',', $results[$k]['tags']);
@@ -56,6 +57,7 @@ $app->get('/view/:id', function ($id) use ($app, $db) {
   $st->setFetchMode(PDO::FETCH_ASSOC);
   $result = $st->fetch();
   $result['tags'] = explode(',', $result['tags']);
+  $st = NULL;
 
   if ($result) {
     $app->render('view.html', array('snippet' => $result,
@@ -77,22 +79,39 @@ $app->map('/add', function () use ($app, $db) {
     foreach ($app->request()->post() as $k => $v)
       $$k = $v;
 
-    if (@$title && @$tags && @$description && @$snippet) {
-      $st = $db->prepare('INSERT INTO snippet (title, description, snippet, tags) VALUES ' .
-                         '(:title, :description, :snippet, :tags)');
-      $st->execute(array(
-        ':title'       => $title,
-        ':description' => $description,
-        ':snippet'     => html_entity_decode($snippet),
-        ':tags'        => $tags
-      ));
+    $st = $db->prepare('SELECT COUNT(*) FROM question WHERE id = :id AND answer LIKE :answer');
+    $st->execute(array(
+      ':id'     => @$_SESSION['question_id'],
+      ':answer' => @$answer
+    ));
 
-      $app->flash('alert', 'Successfully added new snippet.');
-      $app->redirect('/');
+    if ($st->fetchColumn()) {
+      if (@$title && @$tags && @$description && @$snippet) {
+        $st = $db->prepare('INSERT INTO snippet (title, description, snippet, tags) VALUES ' .
+                           '(:title, :description, :snippet, :tags)');
+        $st->execute(array(
+          ':title'       => $title,
+          ':description' => $description,
+          ':snippet'     => html_entity_decode($snippet),
+          ':tags'        => $tags
+        ));
+        
+        $app->flash('alert', 'Successfully added new snippet.');
+        $app->redirect('/');
+      } else {
+        $app->flash('alert', 'All fields are required.');
+      }
     } else {
-      $app->flash('alert', 'All fields are required.');
+       $app->flash('alert', 'Wrong answer.');
     }
-  }   
+  }
+
+  $st = $db->query('SELECT * FROM question ORDER BY RAND() LIMIT 1');
+  $st->setFetchMode(PDO::FETCH_ASSOC);
+  $question = $st->fetch();
+  $_SESSION['question_id'] = $question['id'];
+
+  $st = NULL;
 
   $app->render('add.html', array(
     'alert'       => @$_SESSION['flash']['alert'],
@@ -100,6 +119,7 @@ $app->map('/add', function () use ($app, $db) {
     'tags'        => @$tags,
     'description' => @$description,
     'snippet'     => @$snippet,
+    'question'    => $question['question'],
     'page'        => 'add'
   ));
 })->via('GET', 'POST');
@@ -114,35 +134,53 @@ $app->map('/edit/:id', function ($id) use ($app, $db) {
     foreach ($app->request()->post() as $k => $v)
       $$k = $v;
 
-    if (@$title && @$tags && @$description && @$snippet) {
-      $st = $db->prepare('UPDATE snippet ' .
-                         'SET title = :title, description = :description, snippet = :snippet, tags = :tags ' .
-                         'WHERE id = :id');
-      $st->execute(array(
-        ':title'       => $title,
-        ':description' => $description,
-        ':snippet'     => html_entity_decode($snippet),
-        ':tags'        => $tags,
-        ':id'          => $id
-      ));
+    $st = $db->prepare('SELECT COUNT(*) FROM question WHERE id = :id AND answer LIKE :answer');
+    $st->execute(array(
+      ':id'     => @$_SESSION['question_id'],
+      ':answer' => @$answer
+    ));
 
-      $app->flash('alert', 'Successfully updated the snippet.');
-      $app->redirect('/');
+    if ($st->fetchColumn()) {
+      if (@$title && @$tags && @$description && @$snippet) {
+        $st = $db->prepare('UPDATE snippet ' .
+                           'SET title = :title, description = :description, snippet = :snippet, tags = :tags ' .
+                           'WHERE id = :id');
+        $st->execute(array(
+          ':title'       => $title,
+          ':description' => $description,
+          ':snippet'     => html_entity_decode($snippet),
+          ':tags'        => $tags,
+          ':id'          => $id
+        ));
+
+        $app->flash('alert', 'Successfully updated the snippet.');
+        $app->redirect('/');
+      } else {
+        $app->flash('alert', 'All fields are required.');
+      }
     } else {
-      $app->flash('alert', 'All fields are required.');
+       $app->flash('alert', 'Wrong answer.');
     }
   }
+
+  $st = $db->query('SELECT * FROM question ORDER BY RAND() LIMIT 1');
+  $st->setFetchMode(PDO::FETCH_ASSOC);
+  $question = $st->fetch();
+  $_SESSION['question_id'] = $question['id'];
 
   $st = $db->prepare('SELECT * FROM snippet WHERE id = :id');
   $st->execute(array(':id' => $id));
   $st->setFetchMode(PDO::FETCH_ASSOC);
   $result = $st->fetch();
+  
+  $st = NULL;
 
   if ($result) {
     $app->render('edit.html', array(
-      'alert'       => @$_SESSION['flash']['alert'],
-      'snippet'     => $result,
-      'page'        => 'edit'
+      'alert'    => @$_SESSION['flash']['alert'],
+      'snippet'  => $result,
+      'question' => $question['question'],
+      'page'     => 'edit'
     ));
   } else {
     $app->flash('alert', 'An invalid snippet id was entered.');
