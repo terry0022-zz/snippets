@@ -1,4 +1,4 @@
-snippets.
+#snippets.
 ===============
 _your personal code scrapbook (built with SlimPHP and TWIG)_
 
